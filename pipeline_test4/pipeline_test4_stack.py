@@ -17,8 +17,10 @@ class PipelineTest4Stack(cdk.Stack):
             handler='handler.handler',
             code=lambda_.Code.from_asset(path.join(this_dir, 'lambda')))          
             
-        apigwv2.HttpApi(self, "HttpProxyApi4",
+        gw = apigwv2.HttpApi(self, "HttpProxyApi4",
             default_integration=integrations.LambdaProxyIntegration(
                 handler=handler
             )
         )
+
+        cdk.CfnOutput(self, 'Url', value=gw.url)
