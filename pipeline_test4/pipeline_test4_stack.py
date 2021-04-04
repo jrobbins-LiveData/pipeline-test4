@@ -1,6 +1,6 @@
 from os import path
 
-import aws_cdk.aws_gatewayv2 as apigwv2
+import aws_cdk.aws_apigatewayv2 as apigwv2
 import aws_cdk.aws_lambda as lambda_
 from aws_cdk import core as cdk
 
@@ -20,4 +20,4 @@ class PipelineTest4Stack(cdk.Stack):
             default_integration=apigwv2.LambdaProxyIntegration(
                 handler=handler
             )
-        ))
+        )
