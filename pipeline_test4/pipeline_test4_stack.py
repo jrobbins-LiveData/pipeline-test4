@@ -1,6 +1,7 @@
 from os import path
 
 import aws_cdk.aws_apigatewayv2 as apigwv2
+import aws_cdk.aws_apigatewayv2_integrations as integrations
 import aws_cdk.aws_lambda as lambda_
 from aws_cdk import core as cdk
 
@@ -17,7 +18,7 @@ class PipelineTest4Stack(cdk.Stack):
             code=lambda_.Code.from_asset(path.join(this_dir, 'lambda')))          
             
         apigwv2.HttpApi(self, "HttpProxyApi4",
-            default_integration=apigwv2.LambdaProxyIntegration(
+            default_integration=integrations.LambdaProxyIntegration(
                 handler=handler
             )
         )
