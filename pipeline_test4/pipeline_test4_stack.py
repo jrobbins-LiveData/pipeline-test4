@@ -15,7 +15,7 @@ class PipelineTest4Stack(cdk.Stack):
         handler = lambda_.Function(self, 'Handler4',
             runtime=lambda_.Runtime.PYTHON_3_8,
             handler='handler.handler',
-            memory_size=2048 # NOTE testing impact on latency
+            memory_size=2048, # NOTE testing impact on latency
             code=lambda_.Code.from_asset(path.join(this_dir, 'lambda')))          
             
         gw = apigwv2.HttpApi(self, "HttpProxyApi4",
