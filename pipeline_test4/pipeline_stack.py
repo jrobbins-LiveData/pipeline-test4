@@ -15,8 +15,8 @@ class PipelineStack4(cdk.Stack):
 
     source_artifact = codepipeline.Artifact()
     cloud_assembly_artifact = codepipeline.Artifact()
-CdkPipeline
-    pipeline = pipelines.(self, 'Pipeline4',
+
+    pipeline = pipelines.CdkPipeline(self, 'Pipeline4',
       cloud_assembly_artifact=cloud_assembly_artifact,
       pipeline_name='PipelineTest4',
       cross_account_keys=False, # NOTE save $1/month avoiding AWS KMS CMK
