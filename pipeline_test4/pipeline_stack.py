@@ -15,12 +15,12 @@ class PipelineStack4(cdk.Stack):
 
     source_artifact = codepipeline.Artifact()
     cloud_assembly_artifact = codepipeline.Artifact()
-
-    pipeline = pipelines.CdkPipeline(self, 'Pipeline4',
+CdkPipeline
+    pipeline = pipelines.(self, 'Pipeline4',
       cloud_assembly_artifact=cloud_assembly_artifact,
       pipeline_name='PipelineTest4',
       cross_account_keys=False, # NOTE save $1/month avoiding AWS KMS CMK
-      self_mutating=True, # NOTE experiment failed with False
+      self_mutating=False, # NOTE experiment failed with False
 
       # NOTE this codepipeline action is poorly named!
       # see https://github.com/aws/aws-cdk/issues/10632#issuecomment-702293070 for details
