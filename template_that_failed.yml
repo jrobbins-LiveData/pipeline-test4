@@ -1,0 +1,208 @@
+Resources:
+  Handler4ServiceRoleDAF137F3:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: "sts:AssumeRole"
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - !Join
+          - ""
+          - - "arn:"
+            - !Ref "AWS::Partition"
+            - ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+    Metadata:
+      "aws:cdk:path": PipelineStack4/Prod/WebService4/Handler4/ServiceRole/Resource
+  Handler4777AE984:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+        S3Key: a6ccfa9275221158332cfb0f3b9e6884bcbce0813670caead1a92662daa9e2d1.zip # where is this?
+      Role: !GetAtt
+        - Handler4ServiceRoleDAF137F3
+        - Arn
+      Handler: handler.handler
+      MemorySize: 2048
+      Runtime: python3.8
+    DependsOn:
+      - Handler4ServiceRoleDAF137F3
+    Metadata:
+      "aws:cdk:path": PipelineStack4/Prod/WebService4/Handler4/Resource
+      "aws:asset:path": >-
+        ../asset.a6ccfa9275221158332cfb0f3b9e6884bcbce0813670caead1a92662daa9e2d1
+      "aws:asset:property": Code
+  HttpProxyApi46491497F:
+    Type: "AWS::ApiGatewayV2::Api"
+    Properties:
+      Name: HttpProxyApi4
+      ProtocolType: HTTP
+    Metadata:
+      "aws:cdk:path": PipelineStack4/Prod/WebService4/HttpProxyApi4/Resource
+  ? HttpProxyApi4DefaultRoutePipelineStack4ProdWebService4HttpProxyApi4DefaultRoute44E42122PermissionB3893209
+  : Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt
+        - Handler4777AE984
+        - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join
+        - ""
+        - - "arn:"
+          - !Ref "AWS::Partition"
+          - ":execute-api:"
+          - !Ref "AWS::Region"
+          - ":"
+          - !Ref "AWS::AccountId"
+          - ":"
+          - !Ref HttpProxyApi46491497F
+          - /*/*
+    Metadata:
+      "aws:cdk:path": >-
+        PipelineStack4/Prod/WebService4/HttpProxyApi4/DefaultRoute/PipelineStack4ProdWebService4HttpProxyApi4DefaultRoute44E42122-Permission
+  ? HttpProxyApi4DefaultRouteHttpIntegration8d6aaa17333049594c1d28e3eaddde28EAA66C5F
+  : Type: "AWS::ApiGatewayV2::Integration"
+    Properties:
+      ApiId: !Ref HttpProxyApi46491497F
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt
+        - Handler4777AE984
+        - Arn
+      PayloadFormatVersion: "2.0"
+    Metadata:
+      "aws:cdk:path": >-
+        PipelineStack4/Prod/WebService4/HttpProxyApi4/DefaultRoute/HttpIntegration-8d6aaa17333049594c1d28e3eaddde28/Resource
+  HttpProxyApi4DefaultRouteF49C73C6:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref HttpProxyApi46491497F
+      RouteKey: $default
+      Target: !Join
+        - ""
+        - - integrations/
+          - !Ref >-
+            HttpProxyApi4DefaultRouteHttpIntegration8d6aaa17333049594c1d28e3eaddde28EAA66C5F
+    Metadata:
+      "aws:cdk:path": PipelineStack4/Prod/WebService4/HttpProxyApi4/DefaultRoute/Resource
+  HttpProxyApi4DefaultStage088A8176:
+    Type: "AWS::ApiGatewayV2::Stage"
+    Properties:
+      ApiId: !Ref HttpProxyApi46491497F
+      StageName: $default
+      AutoDeploy: true
+    Metadata:
+      "aws:cdk:path": PipelineStack4/Prod/WebService4/HttpProxyApi4/DefaultStage/Resource
+  CDKMetadata:
+    Type: "AWS::CDK::Metadata"
+    Properties:
+      Analytics: >-
+        v2:deflate64:H4sIAAAAAAAAA11PQU4DMQx8S+9ZF1oJqTeqSqicqJYXmKxZTLvJKnaoqih/pw5CVJxmPB7b43vYPMDd4hHP0vnhuCw+JoLyquiPbitCeqUjh9H1JDEnT273Hl6yzlndLgbRlL2adtu/NgZWjqE6W1xOOL0NCOUpB2+yeW75gdLEIm2AcYLSx1NbZFidrDu0KAItkcOZR1Q64+VrBWWvOm9nNruBlX3MSo09B6Ux4e+hf+Wfz75sFxuptbrDRT9iWK5hA6vFpzB3KQfliaD/wW+Dz1p9OwEAAA==
+    Metadata:
+      "aws:cdk:path": PipelineStack4/Prod/WebService4/CDKMetadata/Default
+    Condition: CDKMetadataAvailable
+Outputs:
+  Url:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !Ref HttpProxyApi46491497F
+        - .execute-api.
+        - !Ref "AWS::Region"
+        - .
+        - !Ref "AWS::URLSuffix"
+        - /
+Conditions:
+  CDKMetadataAvailable: !Or
+    - !Or
+      - !Equals
+        - !Ref "AWS::Region"
+        - af-south-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - ap-east-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - ap-northeast-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - ap-northeast-2
+      - !Equals
+        - !Ref "AWS::Region"
+        - ap-south-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - ap-southeast-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - ap-southeast-2
+      - !Equals
+        - !Ref "AWS::Region"
+        - ca-central-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - cn-north-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - cn-northwest-1
+    - !Or
+      - !Equals
+        - !Ref "AWS::Region"
+        - eu-central-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - eu-north-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - eu-south-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - eu-west-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - eu-west-2
+      - !Equals
+        - !Ref "AWS::Region"
+        - eu-west-3
+      - !Equals
+        - !Ref "AWS::Region"
+        - me-south-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - sa-east-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - us-east-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - us-east-2
+    - !Or
+      - !Equals
+        - !Ref "AWS::Region"
+        - us-west-1
+      - !Equals
+        - !Ref "AWS::Region"
+        - us-west-2
+Parameters:
+  BootstrapVersion:
+    Type: "AWS::SSM::Parameter::Value<String>"
+    Default: /cdk-bootstrap/hnb659fds/version
+    Description: >-
+      Version of the CDK Bootstrap resources in this environment, automatically
+      retrieved from SSM Parameter Store.
+Rules:
+  CheckBootstrapVersion:
+    Assertions:
+      - Assert: !Not
+          - "Fn::Contains":
+              - - "1"
+                - "2"
+                - "3"
+              - !Ref BootstrapVersion
+        AssertDescription: >-
+          CDK bootstrap stack version 4 required. Please run 'cdk bootstrap'
+          with a recent version of the CDK CLI.
