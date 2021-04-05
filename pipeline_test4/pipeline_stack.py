@@ -42,7 +42,7 @@ class PipelineStack4(cdk.Stack):
         synth_command='cdk synth',
         environment=codebuild.BuildEnvironment(
             privileged=True,
-            environment_variables={"BIBIM": codebuild.BuildEnvironmentVariable(value="BOP4")},
+            environment_variables={"BIBIM": codebuild.BuildEnvironmentVariable(value="BOP4_CONTAINER")},
             compute_type=codebuild.ComputeType.MEDIUM,
             build_image=codebuild.LinuxBuildImage.STANDARD_5_0)
       ))

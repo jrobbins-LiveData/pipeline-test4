@@ -12,11 +12,20 @@ class PipelineTest4Stack(cdk.Stack):
 
         this_dir = path.dirname(__file__)
 
+        ecr_image = lambda_.EcrImageCode.from_asset_image(
+            directory=path.join(this_dir, 'lambda')
+        )
+
         handler = lambda_.Function(self, 'Handler4',
-            runtime=lambda_.Runtime.PYTHON_3_8,
-            handler='handler.handler',
             memory_size=2048, # NOTE testing impact on latency
-            code=lambda_.Code.from_asset(path.join(this_dir, 'lambda')))          
+            tracing=lambda_.Tracing.DISABLED, # NOTE for XRay tracing: _lambda.Tracing.ACTIVE,
+            # code=lambda_.Code.from_asset(path.join(this_dir, 'lambda')),
+            # handler='handler.handler',
+            # runtime=lambda_.Runtime.PYTHON_3_8,
+            code=ecr_image,
+            handler=lambda_.Handler.FROM_IMAGE,
+            runtime=lambda_.Runtime.FROM_IMAGE,
+        )          
             
         gw = apigwv2.HttpApi(self, "HttpProxyApi4",
             default_integration=integrations.LambdaProxyIntegration(
